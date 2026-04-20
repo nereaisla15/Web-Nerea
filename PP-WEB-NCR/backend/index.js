@@ -1,3 +1,20 @@
+// Permitir CORS para que el frontend pueda acceder al backend
+const cors = require('cors');
+require('dotenv').config();
+const express = require('express');
+const passport = require('passport');
+const session = require('express-session');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const { libros, categorias, prestamos } = require('./models');
+
+const app = express();
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+
+// Ruta de bienvenida para evitar 'Cannot GET /'
+app.get('/', (req, res) => {
+  res.send('<h2>Backend Biblioteca Online</h2><p>API REST funcionando. Usa /api/libros, /api/prestamos, etc.</p>');
+});
+
 // --- CRUD Préstamos ---
 // Obtener todos los préstamos
 app.get('/api/prestamos', (req, res) => {
@@ -38,14 +55,6 @@ app.delete('/api/prestamos/:id', (req, res) => {
   prestamos.splice(idx, 1);
   res.status(204).end();
 });
-require('dotenv').config();
-const express = require('express');
-const passport = require('passport');
-const session = require('express-session');
-
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
-const { libros, categorias, prestamos } = require('./models');
-
 
 // Middleware para extraer usuario autenticado de OAuth2 y asignar roles/atributos
 app.use((req, res, next) => {
@@ -70,6 +79,7 @@ function soloAdmin(req, res, next) {
 }
 
 // Middleware ABAC: solo mayores de edad para libros restringidos
+
 function mayorEdad(req, res, next) {
   if (req.body.restringido && (!req.usuario || req.usuario.edad < 18)) {
     return res.status(403).json({ error: 'Debes ser mayor de edad para esta acción' });
@@ -77,7 +87,6 @@ function mayorEdad(req, res, next) {
   next();
 }
 
-const app = express();
 app.use(express.json());
 
 // Configuración de sesión (ajustar secret en producción)

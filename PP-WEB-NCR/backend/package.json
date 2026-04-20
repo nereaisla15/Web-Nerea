@@ -7,10 +7,13 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "lint": "eslint .",
-    "test": "echo \"No tests yet\""
+    "test": "echo \"No tests yet\"",
+    "sast": "node ./node_modules/sonarqube-scanner/bin/sonar-scanner.js",
+    "depcheck": "dependency-check --format ALL --out dependency-check-report.html package.json"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.5",
+    "cors": "^2.8.6",
     "dotenv": "^16.4.5",
     "express": "^4.18.2",
     "express-session": "^1.19.0",
@@ -21,6 +24,8 @@
   },
   "devDependencies": {
     "eslint": "^8.57.0",
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.0",
+    "owasp-dependency-check": "^1.0.1",
+    "sonarqube-scanner": "^4.3.6"
   }
 }
